@@ -1,0 +1,16 @@
+body{
+    font-family: 'Play', sans-serif;
+}
+.game-board{
+    display: flex;
+    flex-wrap: wrap;
+    width: 610px;
+    gap: 5px;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.grid{
+    background-color: rgba(0, 0, 0, 0.582);
+    height: 200px;
+    width: 200px;
+}
