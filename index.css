@@ -1,16 +1,31 @@
 body{
+    color: white;
     font-family: 'Play', sans-serif;
+    background-color: rgb(54, 22, 14);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 }
 .game-board{
     display: flex;
     flex-wrap: wrap;
-    width: 610px;
-    gap: 5px;
+    width: 620px;
+    height: 620px;
+    gap: 10px;
     justify-content: space-evenly;
     align-items: center;
+    background-color: black;
 }
 .grid{
-    background-color: rgba(0, 0, 0, 0.582);
+    background-color: rgba(133, 116, 68, 0.692);
     height: 200px;
     width: 200px;
+    font-size: 175px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.grid:hover{
+    background-color: rgba(255, 255, 255, 0.151);
 }
