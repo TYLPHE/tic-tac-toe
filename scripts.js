@@ -1,4 +1,4 @@
-(function (){
+// (function (){
     let gameBoard = {
         array: [
             ``, ``, ``,
@@ -20,6 +20,12 @@
                 grid.className = `grid ${i}`;
                 grid.id = i;
                 grid.textContent = this.array[i];
+                if(this.array[i] == `X`){
+                    grid.style.color = player1.getColor;
+                }
+                if(this.array[i] == `O`){
+                    grid.style.color = player2.getColor;
+                }
             };
             gameBoard.addListeners();
         },
@@ -41,13 +47,13 @@
             };
         },
         markBoard: function(){
-            gameBoard.array[this.id] = gameBoard.playerplayerTurn();
+            gameBoard.array[this.id] = gameBoard.switchPlayer();
             gameBoard.wipeGrid();
             gameBoard.renderGrid();
             gameBoard.removeListeners();
             gameBoard.checkVictory();
         },
-        playerplayerTurn: function(){
+        switchPlayer: function(){
             if(this.playerTurn == 1){
                 gameBoard.playerTurn = 0;
                 return player2.getShape;
@@ -175,16 +181,15 @@
             document.querySelector(`.select-container`).remove();
             gameBoard.init();
         },
-        colors: ["#F800FF","#FFF800","#00FFF8","#4300FF","#FF4300","#00FF43"],
+        colors: ["#f18df5","#FFF800","#65dffd","#ffffff","#ff7474","#73ffbe"],
         selectContainer: function (){
             let selectContainer = document.createElement(`div`);
                 selectContainer.className = `select-container`;
             let selectTitle = document.createElement(`div`);
                 selectTitle.className = `select-title`;
-                selectTitle.textContent = `Player X color:`;
+                selectTitle.textContent = `Player X color`;
             let colorContainer = document.createElement(`div`);
                 colorContainer.className = `color-container`;
-                this.colorGenerator();
             let continueButton = document.createElement(`button`);
                 continueButton.className = `continue`;
                 continueButton.textContent = `Next`;
@@ -193,23 +198,39 @@
             selectContainer.appendChild(colorContainer);
             document.querySelector(`.game-board`).appendChild(selectContainer);
             selectContainer.appendChild(continueButton);
+            this.colorGenerator();
         },
         colorGenerator: function(){
+            let container = document.querySelector(`.color-container`);
             for(let i = 0; i < playerSelect.colors.length; i++){
-                console.log(`color`);
+                let colorSquare = document.createElement(`div`);
+                colorSquare.className = `color-square`;
+                colorSquare.id = `${i}`;
+                colorSquare.style.backgroundColor = this.colors[i];
+                container.appendChild(colorSquare);
+            };
+            this.colorEventListeners();
+        },
+        colorEventListeners: function (){
+            for(let i = 0; i < playerSelect.colors.length; i++){
+                let event = document.getElementById(`${i}`);
+                event.addEventListener(`click`, this.setPlayer1Color);
             }
-        }
+        },
+        setPlayer1Color: function (){
+            player1.getColor = playerSelect.colors[this.id];
+            document.querySelector(`.select-title`).style.color = playerSelect.colors[this.id];
+            console.log(player1.getColor);
+        },
     }
-    const player = function(name, shape){
+    const player = function(name, shape, color){
         const getShape = shape;
         const getName = name;
-        const selectGrid = function(){
-            console.log(`hello`);
-        };
-        return {selectGrid, getShape, getName}
+        const getColor = color;
+        return {getShape, getName, getColor}
     };
-    const player1 = player(`player 1`, `X`);
-    const player2 = player(`Player 2`, `O`);
-    // gameBoard.init();
+    const player1 = player(`player 1`, `X`, ``);
+    const player2 = player(`Player 2`, `O`, ``);
+    // gameBoard.init();f
     playerSelect.selectContainer();
-})();
+// })();

@@ -1,7 +1,11 @@
+*{
+    font-family: 'Mukta', sans-serif;
+}
 body{
     color: white;
-    font-family: 'Play', sans-serif;
-    background-color: rgb(54, 22, 14);
+    font-family: 'Mukta', sans-serif;
+    font-weight: 900;    
+    background-color: #656781;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,7 +22,7 @@ body{
     background-color: black;
 }
 .grid{
-    background-color: rgba(133, 116, 68, 0.692);
+    background-color: #656781;
     height: 200px;
     width: 200px;
     font-size: 175px;
@@ -27,16 +31,17 @@ body{
     align-items: center;
 }
 .grid:hover{
-    background-color: rgba(255, 255, 255, 0.151);
+    background-color: #656781a9;
 }
 .sum-container{
+    background-color: #656781;
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 150px;
+    font-size: 100px;
     gap: 100px;
 }
 .continue{
@@ -47,6 +52,7 @@ body{
     cursor: pointer;
 }
 .select-container{
+    background-color: #656781;
     height: 100%;
     width: 100%;
     display: flex;
@@ -59,8 +65,16 @@ body{
 .color-container{
     height: 100%;
     width: 80%;
-    border: 1px solid white;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
 }
 .select-title{
     margin: 20px;
+    color:#ffffff;
+}
+.color-square{
+    width: 30%;
+    border: 1px solid black;
 }
