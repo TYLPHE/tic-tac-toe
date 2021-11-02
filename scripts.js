@@ -6,6 +6,7 @@
             ``, ``, ``,
         ],
         playerTurn: 0,
+        cpu: 0,
         init: function(){
             this.domSet();
             this.renderGrid();
@@ -36,6 +37,8 @@
         },
         addListeners: function(){
             for(i = 0; i < this.array.length; i++){
+                document.getElementById(i).addEventListener(`mouseover`, gameBoard.hoverShape);
+                document.getElementById(i).addEventListener(`mouseout`, gameBoard.removeHoverShape);
                 document.getElementById(i).addEventListener(`click`, gameBoard.markBoard);
             };
         },
@@ -43,6 +46,8 @@
             for(i = 0; i < this.array.length; i++){
                 if(this.array[i] !== ``){
                     document.getElementById(i).removeEventListener(`click`, gameBoard.markBoard);
+                    document.getElementById(i).removeEventListener(`mouseover`, gameBoard.hoverShape);
+                    document.getElementById(i).removeEventListener(`mouseout`, gameBoard.removeHoverShape);
                 };
             };
         },
@@ -62,6 +67,18 @@
                 gameBoard.playerTurn = 1;
                 return player1.getShape;
             }
+        },
+        hoverShape: function(){
+            document.getElementById(this.id).style.color = `#ffffff59`;
+            if(gameBoard.playerTurn == 1){
+                document.getElementById(this.id).textContent = player2.getShape;
+            }
+            else{
+                document.getElementById(this.id).textContent = player1.getShape;
+            }
+        },
+        removeHoverShape: function(){
+            document.getElementById(this.id).textContent = ``;
         },
         continue: function(){
             gameBoard.array = [
@@ -179,7 +196,12 @@
     let playerSelect = {
         continue: function(){
             document.querySelector(`.select-container`).remove();
-            gameBoard.init();
+            if(player2.getColor !== ``){
+                playerSelect.setCPU();
+            }
+            else{
+                playerSelect.selectContainer();
+            }
         },
         colors: ["#f18df5","#FFF800","#65dffd","#ffffff","#ff7474","#73ffbe"],
         selectContainer: function (){
@@ -187,17 +209,17 @@
                 selectContainer.className = `select-container`;
             let selectTitle = document.createElement(`div`);
                 selectTitle.className = `select-title`;
-                selectTitle.textContent = `Player X color`;
+                if(player1.getColor == ``){
+                    selectTitle.textContent = `Player X color`;  
+                }
+                else{
+                    selectTitle.textContent = `Player O color`;
+                }
             let colorContainer = document.createElement(`div`);
                 colorContainer.className = `color-container`;
-            let continueButton = document.createElement(`button`);
-                continueButton.className = `continue`;
-                continueButton.textContent = `Next`;
-                continueButton.addEventListener(`click`, this.continue);
             selectContainer.appendChild(selectTitle);
             selectContainer.appendChild(colorContainer);
             document.querySelector(`.game-board`).appendChild(selectContainer);
-            selectContainer.appendChild(continueButton);
             this.colorGenerator();
         },
         colorGenerator: function(){
@@ -214,13 +236,43 @@
         colorEventListeners: function (){
             for(let i = 0; i < playerSelect.colors.length; i++){
                 let event = document.getElementById(`${i}`);
-                event.addEventListener(`click`, this.setPlayer1Color);
+                event.addEventListener(`click`, this.setPlayerColor);
+                event.addEventListener(`mouseover`, this.colorHover)
             }
         },
-        setPlayer1Color: function (){
-            player1.getColor = playerSelect.colors[this.id];
+        colorHover: function(){
             document.querySelector(`.select-title`).style.color = playerSelect.colors[this.id];
+        },
+        setPlayerColor: function (){
+            if(player1.getColor == ``){
+                player1.getColor = playerSelect.colors[this.id];
+                playerSelect.continue();
+            }
+            else{
+                player2.getColor = playerSelect.colors[this.id];
+                document.querySelector(`.select-title`).style.color = playerSelect.colors[this.id];
+                playerSelect.continue();
+            }
+            
             console.log(player1.getColor);
+        },
+        setCPU: function(){
+            this.selectContainer();
+            let selectTitle = document.querySelector(`.select-title`);
+            selectTitle.textContent = `Play vs bot?`;
+            document.querySelector(`.color-container`).remove();
+            let confirmContainer = document.createElement(`div`);
+            confirmContainer.className = `confirm-container`;
+            let yes = document.createElement(`button`);
+            yes.className = `confirm`;
+            yes.textContent = `Yes`;
+            let no = document.createElement(`button`);
+            no.className = `confirm`;
+            no.textContent = `no`;
+            confirmContainer.appendChild(yes);
+            confirmContainer.appendChild(no);
+            let selectContainer = document.querySelector(`.select-container`);
+            selectContainer.appendChild(confirmContainer);
         },
     }
     const player = function(name, shape, color){

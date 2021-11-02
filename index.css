@@ -31,7 +31,7 @@ body{
     align-items: center;
 }
 .grid:hover{
-    background-color: #656781a9;
+    background-color: #76799b;
 }
 .sum-container{
     background-color: #656781;
@@ -77,4 +77,14 @@ body{
 .color-square{
     width: 30%;
     border: 1px solid black;
+}
+.confirm-container{
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+.confirm{
+    font-size: 30px;
+    width: 200px;
+    height: 75px;
 }
