@@ -10,6 +10,8 @@
         init: function(){
             this.domSet();
             this.renderGrid();
+            gameBoard.addListeners();
+            gameBoard.removeListeners();
         },
         domSet: function(){
             gameBoard.$board = document.querySelector(`.game-board`);
@@ -21,14 +23,14 @@
                 grid.className = `grid ${i}`;
                 grid.id = i;
                 grid.textContent = this.array[i];
-                if(this.array[i] == `X`){
+                if(this.array[i] === `X`){
                     grid.style.color = player1.getColor;
                 }
-                if(this.array[i] == `O`){
+                if(this.array[i] === `O`){
                     grid.style.color = player2.getColor;
                 }
             };
-            gameBoard.addListeners();
+            gameBoard.checkVictory();
         },
         wipeGrid: function(){
             for(i = 0; i < this.array.length; i++){
@@ -51,15 +53,30 @@
                 };
             };
         },
+        cpuTurn: function(){
+            if(gameBoard.cpu === 1 && gameBoard.playerTurn === 1){
+                cpuLogic.start();
+                setTimeout(() => {
+                    gameBoard.wipeGrid();
+                    gameBoard.renderGrid();
+                    gameBoard.addListeners();
+                    gameBoard.removeListeners();    
+                },Math.random() * 1000);
+            }
+            else{
+                gameBoard.addListeners();
+                gameBoard.removeListeners();
+            }
+        },
+
         markBoard: function(){
             gameBoard.array[this.id] = gameBoard.switchPlayer();
+            gameBoard.removeListeners();
             gameBoard.wipeGrid();
             gameBoard.renderGrid();
-            gameBoard.removeListeners();
-            gameBoard.checkVictory();
         },
         switchPlayer: function(){
-            if(this.playerTurn == 1){
+            if(this.playerTurn === 1){
                 gameBoard.playerTurn = 0;
                 return player2.getShape;
             }
@@ -70,7 +87,7 @@
         },
         hoverShape: function(){
             document.getElementById(this.id).style.color = `#ffffff59`;
-            if(gameBoard.playerTurn == 1){
+            if(gameBoard.playerTurn === 1){
                 document.getElementById(this.id).textContent = player2.getShape;
             }
             else{
@@ -113,7 +130,7 @@
             this.createSummary();
             let title = document.querySelector(`.title`);
             let winner;
-                if(this.playerTurn == 0){
+                if(this.playerTurn === 0){
                     winner = player2.getShape;
                 }
                 else{
@@ -123,73 +140,93 @@
         },
         checkVictory: function (){
             switch(true){
+                case (gameBoard.array[0] === `X` && 
+                      gameBoard.array[1] === `X` && 
+                      gameBoard.array[2] === `X` ||
+                      gameBoard.array[0] === `O` && 
+                      gameBoard.array[1] === `O` && 
+                      gameBoard.array[2] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
+                case (gameBoard.array[3] === `X` && 
+                      gameBoard.array[4] === `X` && 
+                      gameBoard.array[5] === `X` ||
+                      gameBoard.array[3] === `O` && 
+                      gameBoard.array[4] === `O` && 
+                      gameBoard.array[5] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
+                case (gameBoard.array[6] === `X` && 
+                      gameBoard.array[7] === `X` && 
+                      gameBoard.array[8] === `X` ||
+                      gameBoard.array[6] === `O` && 
+                      gameBoard.array[7] === `O` && 
+                      gameBoard.array[8] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
+                case (gameBoard.array[0] === `X` && 
+                      gameBoard.array[3] === `X` && 
+                      gameBoard.array[6] === `X` ||
+                      gameBoard.array[0] === `O` && 
+                      gameBoard.array[3] === `O` && 
+                      gameBoard.array[6] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
+                case (gameBoard.array[1] === `X` && 
+                      gameBoard.array[4] === `X` && 
+                      gameBoard.array[7] === `X` ||
+                      gameBoard.array[1] === `O` && 
+                      gameBoard.array[4] === `O` && 
+                      gameBoard.array[7] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
+                case (gameBoard.array[2] === `X` && 
+                      gameBoard.array[5] === `X` && 
+                      gameBoard.array[8] === `X` ||
+                      gameBoard.array[2] === `O` && 
+                      gameBoard.array[5] === `O` && 
+                      gameBoard.array[8] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
+                case (gameBoard.array[0] === `X` && 
+                      gameBoard.array[4] === `X` && 
+                      gameBoard.array[8] === `X` ||
+                      gameBoard.array[0] === `O` && 
+                      gameBoard.array[4] === `O` && 
+                      gameBoard.array[8] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
+                case (gameBoard.array[2] === `X` && 
+                      gameBoard.array[4] === `X` && 
+                      gameBoard.array[6] === `X` ||
+                      gameBoard.array[2] === `O` && 
+                      gameBoard.array[4] === `O` && 
+                      gameBoard.array[6] === `O` ):
+                    setTimeout(() => {
+                        gameBoard.victoryScreen();
+                    }, 2000);
+                break;
                 case (!gameBoard.array.includes(``)):
-                    gameBoard.tieScreen();
-                    break;
-                case (gameBoard.array[0] == `X` && 
-                      gameBoard.array[1] == `X` && 
-                      gameBoard.array[2] == `X` ||
-                      gameBoard.array[0] == `O` && 
-                      gameBoard.array[1] == `O` && 
-                      gameBoard.array[2] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
-                case (gameBoard.array[3] == `X` && 
-                      gameBoard.array[4] == `X` && 
-                      gameBoard.array[5] == `X` ||
-                      gameBoard.array[3] == `O` && 
-                      gameBoard.array[4] == `O` && 
-                      gameBoard.array[5] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
-                case (gameBoard.array[6] == `X` && 
-                      gameBoard.array[7] == `X` && 
-                      gameBoard.array[8] == `X` ||
-                      gameBoard.array[6] == `O` && 
-                      gameBoard.array[7] == `O` && 
-                      gameBoard.array[8] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
-                case (gameBoard.array[0] == `X` && 
-                      gameBoard.array[3] == `X` && 
-                      gameBoard.array[6] == `X` ||
-                      gameBoard.array[0] == `O` && 
-                      gameBoard.array[3] == `O` && 
-                      gameBoard.array[6] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
-                case (gameBoard.array[1] == `X` && 
-                      gameBoard.array[4] == `X` && 
-                      gameBoard.array[7] == `X` ||
-                      gameBoard.array[1] == `O` && 
-                      gameBoard.array[4] == `O` && 
-                      gameBoard.array[7] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
-                case (gameBoard.array[2] == `X` && 
-                      gameBoard.array[5] == `X` && 
-                      gameBoard.array[8] == `X` ||
-                      gameBoard.array[2] == `O` && 
-                      gameBoard.array[5] == `O` && 
-                      gameBoard.array[8] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
-                case (gameBoard.array[0] == `X` && 
-                      gameBoard.array[4] == `X` && 
-                      gameBoard.array[8] == `X` ||
-                      gameBoard.array[0] == `O` && 
-                      gameBoard.array[4] == `O` && 
-                      gameBoard.array[8] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
-                case (gameBoard.array[2] == `X` && 
-                      gameBoard.array[4] == `X` && 
-                      gameBoard.array[6] == `X` ||
-                      gameBoard.array[2] == `O` && 
-                      gameBoard.array[4] == `O` && 
-                      gameBoard.array[6] == `O` ):
-                    gameBoard.victoryScreen();
-                    break;
+                    setTimeout(() => {
+                        gameBoard.tieScreen();
+                    }, 2000);
+                break;
+                default:
+                    gameBoard.cpuTurn();
             };
         },
     };
@@ -209,7 +246,7 @@
                 selectContainer.className = `select-container`;
             let selectTitle = document.createElement(`div`);
                 selectTitle.className = `select-title`;
-                if(player1.getColor == ``){
+                if(player1.getColor === ``){
                     selectTitle.textContent = `Player X color`;  
                 }
                 else{
@@ -244,7 +281,7 @@
             document.querySelector(`.select-title`).style.color = playerSelect.colors[this.id];
         },
         setPlayerColor: function (){
-            if(player1.getColor == ``){
+            if(player1.getColor === ``){
                 player1.getColor = playerSelect.colors[this.id];
                 playerSelect.continue();
             }
@@ -253,8 +290,6 @@
                 document.querySelector(`.select-title`).style.color = playerSelect.colors[this.id];
                 playerSelect.continue();
             }
-            
-            console.log(player1.getColor);
         },
         setCPU: function(){
             this.selectContainer();
@@ -266,14 +301,36 @@
             let yes = document.createElement(`button`);
             yes.className = `confirm`;
             yes.textContent = `Yes`;
+            yes.addEventListener(`click`, () => {
+                gameBoard.cpu = 1;
+                document.querySelector(`.select-container`).remove();
+                gameBoard.init();
+            });
             let no = document.createElement(`button`);
             no.className = `confirm`;
-            no.textContent = `no`;
+            no.textContent = `No`;
+            no.addEventListener(`click`, () => {
+                gameBoard.cpu = 0;
+                document.querySelector(`.select-container`).remove();
+                gameBoard.init();
+            });
             confirmContainer.appendChild(yes);
             confirmContainer.appendChild(no);
             let selectContainer = document.querySelector(`.select-container`);
             selectContainer.appendChild(confirmContainer);
         },
+    }
+    const cpuLogic = {
+        start: function(){
+            const newArray = [];
+            gameBoard.array.forEach((x, y)  => {
+                if(x === ``){
+                    newArray.push(y);
+                }
+            });
+            gameBoard.array[newArray[parseInt(Math.random() * newArray.length)]] = gameBoard.switchPlayer();
+        }
+
     }
     const player = function(name, shape, color){
         const getShape = shape;
@@ -283,6 +340,5 @@
     };
     const player1 = player(`player 1`, `X`, ``);
     const player2 = player(`Player 2`, `O`, ``);
-    // gameBoard.init();f
     playerSelect.selectContainer();
 // })();
