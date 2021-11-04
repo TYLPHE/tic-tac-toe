@@ -7,6 +7,7 @@
         ],
         playerTurn: 0,
         cpu: 0,
+        winnerStatus: 0,
         init: function(){
             this.domSet();
             this.renderGrid();
@@ -31,6 +32,12 @@
                 }
             };
             gameBoard.checkVictory();
+            if(gameBoard.winnerStatus !== 0){
+                gameBoard.victoryScreen();
+            }
+            else{
+                gameBoard.cpuTurn();
+            }
         },
         wipeGrid: function(){
             for(i = 0; i < this.array.length; i++){
@@ -55,13 +62,13 @@
         },
         cpuTurn: function(){
             if(gameBoard.cpu === 1 && gameBoard.playerTurn === 1){
-                cpuLogic.start();
+                cpuLogic.cpuMinimax();
                 setTimeout(() => {
                     gameBoard.wipeGrid();
                     gameBoard.renderGrid();
                     gameBoard.addListeners();
                     gameBoard.removeListeners();    
-                },Math.random() * 1000);
+                },Math.random() * 600);
             }
             else{
                 gameBoard.addListeners();
@@ -104,6 +111,7 @@
                 ``, ``, ``,
             ];
             document.querySelector(`.sum-container`).remove();
+            gameBoard.winnerStatus = 0;
             gameBoard.renderGrid();
         },
         createSummary: function(){
@@ -146,9 +154,7 @@
                       gameBoard.array[0] === `O` && 
                       gameBoard.array[1] === `O` && 
                       gameBoard.array[2] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[0];
                 break;
                 case (gameBoard.array[3] === `X` && 
                       gameBoard.array[4] === `X` && 
@@ -156,9 +162,7 @@
                       gameBoard.array[3] === `O` && 
                       gameBoard.array[4] === `O` && 
                       gameBoard.array[5] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[3];
                 break;
                 case (gameBoard.array[6] === `X` && 
                       gameBoard.array[7] === `X` && 
@@ -166,9 +170,7 @@
                       gameBoard.array[6] === `O` && 
                       gameBoard.array[7] === `O` && 
                       gameBoard.array[8] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[6];
                 break;
                 case (gameBoard.array[0] === `X` && 
                       gameBoard.array[3] === `X` && 
@@ -176,9 +178,7 @@
                       gameBoard.array[0] === `O` && 
                       gameBoard.array[3] === `O` && 
                       gameBoard.array[6] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[0];
                 break;
                 case (gameBoard.array[1] === `X` && 
                       gameBoard.array[4] === `X` && 
@@ -186,9 +186,7 @@
                       gameBoard.array[1] === `O` && 
                       gameBoard.array[4] === `O` && 
                       gameBoard.array[7] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[1];
                 break;
                 case (gameBoard.array[2] === `X` && 
                       gameBoard.array[5] === `X` && 
@@ -196,9 +194,7 @@
                       gameBoard.array[2] === `O` && 
                       gameBoard.array[5] === `O` && 
                       gameBoard.array[8] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[2];
                 break;
                 case (gameBoard.array[0] === `X` && 
                       gameBoard.array[4] === `X` && 
@@ -206,9 +202,7 @@
                       gameBoard.array[0] === `O` && 
                       gameBoard.array[4] === `O` && 
                       gameBoard.array[8] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[0];
                 break;
                 case (gameBoard.array[2] === `X` && 
                       gameBoard.array[4] === `X` && 
@@ -216,17 +210,11 @@
                       gameBoard.array[2] === `O` && 
                       gameBoard.array[4] === `O` && 
                       gameBoard.array[6] === `O` ):
-                    setTimeout(() => {
-                        gameBoard.victoryScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = gameBoard.array[2];
                 break;
                 case (!gameBoard.array.includes(``)):
-                    setTimeout(() => {
-                        gameBoard.tieScreen();
-                    }, 2000);
+                    gameBoard.winnerStatus = `tie`;
                 break;
-                default:
-                    gameBoard.cpuTurn();
             };
         },
     };
@@ -321,7 +309,7 @@
         },
     }
     const cpuLogic = {
-        start: function(){
+        cpuRandom: function(){
             const newArray = [];
             gameBoard.array.forEach((x, y)  => {
                 if(x === ``){
@@ -329,8 +317,70 @@
                 }
             });
             gameBoard.array[newArray[parseInt(Math.random() * newArray.length)]] = gameBoard.switchPlayer();
-        }
-
+        },
+        cpuMinimax: function(){
+            const newArray = [];
+            let newScore;
+            gameBoard.array.forEach((x,y) => {
+                if(x === ``){
+                    newArray.push(y);
+                }
+            });
+            let bestScore = -Infinity;
+            for(let i = 0; i < newArray.length; i++){
+                gameBoard.array[i] = `O`;
+                let score = this.minimax(gameBoard.array, 0, true);
+                gameBoard.array[i] = ``;
+                if(score > bestScore){
+                    bestScore = score;
+                    console.log(i);
+                }
+            };
+            gameBoard.array[newScore] = gameBoard.switchPlayer();
+        },
+        scores: {X: -1, O: 1, tie: 0},
+        minimax: function(array, depth, maximizingPlayer){
+            let result = gameBoard.checkVictory();
+            if(gameBoard.winnerStatus !== 0){
+                let score = this.scores[result];
+                gameBoard.winnerStatus = 0;
+                return score;
+            }
+            if(maximizingPlayer){
+                let maxEval = -Infinity;
+                let maxChildArray = [];
+                for (let i = 0; i < array.length; i++) {
+                    if (array[i] === "") {
+                        maxChildArray.push(i);
+                    }
+                }
+                for(let i = 0; i < maxChildArray.length; i++){
+                    array[i] = `O`;
+                    console.log(array);
+                    let eval = this.minimax(maxChildArray[i], depth - 1, false);
+                    array[i] = ``;
+                    maxEval = Math.max(maxEval, eval);
+                }
+                return maxEval;
+            }
+            else{
+                let minEval = Infinity;
+                let minChildArray = [];
+                for (let i = 0; i < array.length; i++) {
+                    if (array[i] === "") {
+                        minChildArray.push(i);
+                    }
+                }
+                for(let i = 0; i < minChildArray.length; i++){
+                    array[i] = `X`;
+                    console.log(array);
+                    let eval = this.minimax(minChildArray[i], depth - 1, true);
+                    array[i] = ``;
+                    minEval = Math.min(minEval, eval);
+                }
+                return minEval;
+            }
+        },
     }
     const player = function(name, shape, color){
         const getShape = shape;
