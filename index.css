@@ -42,10 +42,13 @@ body{
     justify-content: center;
     align-items: center;
     font-size: 100px;
-    gap: 100px;
+    gap: 10px;
+}
+.title{
+    margin-bottom: 100px;
 }
 .continue{
-    margin: 30px;
+    margin: 0;
     width: 80%;
     height: 70px;
     font-size: 40px;
@@ -67,15 +70,17 @@ body{
     width: 80%;
     display:flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 20px;
     justify-content: center;
+    align-items: center;
 }
 .select-title{
     margin: 20px;
     color:#ffffff;
 }
 .color-square{
-    width: 30%;
+    width: 150px;
+    height: 150px;
     border: 1px solid black;
 }
 .confirm-container{
@@ -87,4 +92,5 @@ body{
     font-size: 30px;
     width: 200px;
     height: 75px;
+    cursor: pointer;
 }

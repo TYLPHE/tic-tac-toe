@@ -6,8 +6,9 @@
             ``, ``, ``,
         ],
         playerTurn: 0,
-        cpu: 0,
-        winnerStatus: 0,
+        cpuRandom: 0,
+        cpuMinimax: 0,
+        winnerStatus: false,
         init: function(){
             this.domSet();
             this.renderGrid();
@@ -31,8 +32,8 @@
                     grid.style.color = player2.getColor;
                 }
             };
-            gameBoard.checkVictory();
-            if(gameBoard.winnerStatus !== 0){
+            gameBoard.checkVictory(this.array);
+            if(gameBoard.winnerStatus){
                 gameBoard.victoryScreen();
             }
             else{
@@ -61,14 +62,19 @@
             };
         },
         cpuTurn: function(){
-            if(gameBoard.cpu === 1 && gameBoard.playerTurn === 1){
+            if(gameBoard.cpuRandom === 1 && gameBoard.playerTurn === 1){
+                cpuLogic.cpuRandom();
+                gameBoard.wipeGrid();
+                gameBoard.renderGrid();
+                gameBoard.addListeners();
+                gameBoard.removeListeners();    
+            }
+            else if(gameBoard.cpuMinimax === 1 && gameBoard.playerTurn === 1){
                 cpuLogic.cpuMinimax();
-                setTimeout(() => {
-                    gameBoard.wipeGrid();
-                    gameBoard.renderGrid();
-                    gameBoard.addListeners();
-                    gameBoard.removeListeners();    
-                },Math.random() * 600);
+                gameBoard.wipeGrid();
+                gameBoard.renderGrid();
+                gameBoard.addListeners();
+                gameBoard.removeListeners();  
             }
             else{
                 gameBoard.addListeners();
@@ -111,8 +117,23 @@
                 ``, ``, ``,
             ];
             document.querySelector(`.sum-container`).remove();
-            gameBoard.winnerStatus = 0;
+            gameBoard.winnerStatus = false;
             gameBoard.renderGrid();
+        },
+        reset: function(){
+            gameBoard.array = [
+                ``, ``, ``,
+                ``, ``, ``,
+                ``, ``, ``,
+            ];
+            gameBoard.playerTurn = 0;
+            gameBoard.cpuRandom = 0;
+            gameBoard.cpuMinimax = 0;
+            gameBoard.winnerStatus = false;
+            player1.getColor = ``;
+            player2.getColor = ``;
+            document.querySelector(`.sum-container`).remove();
+            playerSelect.selectContainer();
         },
         createSummary: function(){
             gameBoard.wipeGrid();
@@ -122,97 +143,97 @@
                 continueButton.className = `continue`;
                 continueButton.textContent = `Continue`;
                 continueButton.addEventListener(`click`, this.continue);
+            let resetButton = document.createElement(`button`);
+                resetButton.className = `continue`;
+                resetButton.textContent = `Reset to color selection`;
+                resetButton.addEventListener(`click`, this.reset);
             let title = document.createElement(`div`);
                 title.className = `title`;
                 title.textContent = ``;
             summaryContainer.appendChild(title);
             this.$board.appendChild(summaryContainer);
             summaryContainer.appendChild(continueButton);
-        },
-        tieScreen: function(){
-            this.createSummary();
-            let title = document.querySelector(`.title`);
-            title.textContent = `It's a tie!`;
+            summaryContainer.appendChild(resetButton);
         },
         victoryScreen: function (){
             this.createSummary();
             let title = document.querySelector(`.title`);
             let winner;
-                if(this.playerTurn === 0){
-                    winner = player2.getShape;
+                if(gameBoard.winnerStatus !== `tie`){
+                    winner = gameBoard.winnerStatus;
+                    title.textContent = `${winner} wins!`;
                 }
                 else{
-                    winner = player1.getShape;
+                    title.textContent = `It's a tie!`;
                 };
-            title.textContent = `${winner} wins!`;
         },
-        checkVictory: function (){
+        checkVictory: function (arr){
             switch(true){
-                case (gameBoard.array[0] === `X` && 
-                      gameBoard.array[1] === `X` && 
-                      gameBoard.array[2] === `X` ||
-                      gameBoard.array[0] === `O` && 
-                      gameBoard.array[1] === `O` && 
-                      gameBoard.array[2] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[0];
+                case (arr[0] === `X` && 
+                      arr[1] === `X` && 
+                      arr[2] === `X` ||
+                      arr[0] === `O` && 
+                      arr[1] === `O` && 
+                      arr[2] === `O` ):
+                    gameBoard.winnerStatus = arr[0];
                 break;
-                case (gameBoard.array[3] === `X` && 
-                      gameBoard.array[4] === `X` && 
-                      gameBoard.array[5] === `X` ||
-                      gameBoard.array[3] === `O` && 
-                      gameBoard.array[4] === `O` && 
-                      gameBoard.array[5] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[3];
+                case (arr[3] === `X` && 
+                      arr[4] === `X` && 
+                      arr[5] === `X` ||
+                      arr[3] === `O` && 
+                      arr[4] === `O` && 
+                      arr[5] === `O` ):
+                    gameBoard.winnerStatus = arr[3];
                 break;
-                case (gameBoard.array[6] === `X` && 
-                      gameBoard.array[7] === `X` && 
-                      gameBoard.array[8] === `X` ||
-                      gameBoard.array[6] === `O` && 
-                      gameBoard.array[7] === `O` && 
-                      gameBoard.array[8] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[6];
+                case (arr[6] === `X` && 
+                      arr[7] === `X` && 
+                      arr[8] === `X` ||
+                      arr[6] === `O` && 
+                      arr[7] === `O` && 
+                      arr[8] === `O` ):
+                    gameBoard.winnerStatus = arr[6];
                 break;
-                case (gameBoard.array[0] === `X` && 
-                      gameBoard.array[3] === `X` && 
-                      gameBoard.array[6] === `X` ||
-                      gameBoard.array[0] === `O` && 
-                      gameBoard.array[3] === `O` && 
-                      gameBoard.array[6] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[0];
+                case (arr[0] === `X` && 
+                      arr[3] === `X` && 
+                      arr[6] === `X` ||
+                      arr[0] === `O` && 
+                      arr[3] === `O` && 
+                      arr[6] === `O` ):
+                    gameBoard.winnerStatus = arr[0];
                 break;
-                case (gameBoard.array[1] === `X` && 
-                      gameBoard.array[4] === `X` && 
-                      gameBoard.array[7] === `X` ||
-                      gameBoard.array[1] === `O` && 
-                      gameBoard.array[4] === `O` && 
-                      gameBoard.array[7] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[1];
+                case (arr[1] === `X` && 
+                      arr[4] === `X` && 
+                      arr[7] === `X` ||
+                      arr[1] === `O` && 
+                      arr[4] === `O` && 
+                      arr[7] === `O` ):
+                    gameBoard.winnerStatus = arr[1];
                 break;
-                case (gameBoard.array[2] === `X` && 
-                      gameBoard.array[5] === `X` && 
-                      gameBoard.array[8] === `X` ||
-                      gameBoard.array[2] === `O` && 
-                      gameBoard.array[5] === `O` && 
-                      gameBoard.array[8] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[2];
+                case (arr[2] === `X` && 
+                      arr[5] === `X` && 
+                      arr[8] === `X` ||
+                      arr[2] === `O` && 
+                      arr[5] === `O` && 
+                      arr[8] === `O` ):
+                    gameBoard.winnerStatus = arr[2];
                 break;
-                case (gameBoard.array[0] === `X` && 
-                      gameBoard.array[4] === `X` && 
-                      gameBoard.array[8] === `X` ||
-                      gameBoard.array[0] === `O` && 
-                      gameBoard.array[4] === `O` && 
-                      gameBoard.array[8] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[0];
+                case (arr[0] === `X` && 
+                      arr[4] === `X` && 
+                      arr[8] === `X` ||
+                      arr[0] === `O` && 
+                      arr[4] === `O` && 
+                      arr[8] === `O` ):
+                    gameBoard.winnerStatus = arr[0];
                 break;
-                case (gameBoard.array[2] === `X` && 
-                      gameBoard.array[4] === `X` && 
-                      gameBoard.array[6] === `X` ||
-                      gameBoard.array[2] === `O` && 
-                      gameBoard.array[4] === `O` && 
-                      gameBoard.array[6] === `O` ):
-                    gameBoard.winnerStatus = gameBoard.array[2];
+                case (arr[2] === `X` && 
+                      arr[4] === `X` && 
+                      arr[6] === `X` ||
+                      arr[2] === `O` && 
+                      arr[4] === `O` && 
+                      arr[6] === `O` ):
+                    gameBoard.winnerStatus = arr[2];
                 break;
-                case (!gameBoard.array.includes(``)):
+                case (!arr.includes(``)):
                     gameBoard.winnerStatus = `tie`;
                 break;
             };
@@ -286,11 +307,21 @@
             document.querySelector(`.color-container`).remove();
             let confirmContainer = document.createElement(`div`);
             confirmContainer.className = `confirm-container`;
-            let yes = document.createElement(`button`);
-            yes.className = `confirm`;
-            yes.textContent = `Yes`;
-            yes.addEventListener(`click`, () => {
-                gameBoard.cpu = 1;
+            let random = document.createElement(`button`);
+            random.className = `confirm`;
+            random.textContent = `Bot is random`;
+            random.addEventListener(`click`, () => {
+                gameBoard.cpuRandom = 1;
+                gameBoard.cpuMinimax = 0;
+                document.querySelector(`.select-container`).remove();
+                gameBoard.init();
+            });
+            let minimax = document.createElement(`button`);
+            minimax.className = `confirm`;
+            minimax.textContent = `Bot is minimaxed!`;
+            minimax.addEventListener(`click`, () => {
+                gameBoard.cpuRandom = 0;
+                gameBoard.cpuMinimax = 1
                 document.querySelector(`.select-container`).remove();
                 gameBoard.init();
             });
@@ -298,11 +329,13 @@
             no.className = `confirm`;
             no.textContent = `No`;
             no.addEventListener(`click`, () => {
-                gameBoard.cpu = 0;
+                gameBoard.cpuRandom = 0;
+                gameBoard.cpuMinimax = 0;
                 document.querySelector(`.select-container`).remove();
                 gameBoard.init();
             });
-            confirmContainer.appendChild(yes);
+            confirmContainer.appendChild(random);
+            confirmContainer.appendChild(minimax);
             confirmContainer.appendChild(no);
             let selectContainer = document.querySelector(`.select-container`);
             selectContainer.appendChild(confirmContainer);
@@ -310,73 +343,85 @@
     }
     const cpuLogic = {
         cpuRandom: function(){
-            const newArray = [];
+            const remainingChoices = [];
             gameBoard.array.forEach((x, y)  => {
                 if(x === ``){
-                    newArray.push(y);
+                    remainingChoices.push(y);
                 }
             });
-            gameBoard.array[newArray[parseInt(Math.random() * newArray.length)]] = gameBoard.switchPlayer();
+            gameBoard.array[remainingChoices[parseInt(Math.random() * remainingChoices.length)]] = gameBoard.switchPlayer();
         },
         cpuMinimax: function(){
-            const newArray = [];
-            let newScore;
-            gameBoard.array.forEach((x,y) => {
-                if(x === ``){
-                    newArray.push(y);
+            const remainingChoices = [];
+            for (let i = 0; i < gameBoard.array.length; i++) {
+                if (gameBoard.array[i] === "") {
+                    remainingChoices.push(i);
                 }
-            });
+            }
+            let bestPosition;
             let bestScore = -Infinity;
-            for(let i = 0; i < newArray.length; i++){
-                gameBoard.array[i] = `O`;
-                let score = this.minimax(gameBoard.array, 0, true);
-                gameBoard.array[i] = ``;
+            for(let i = 0; i < remainingChoices.length; i++){
+                gameBoard.array[remainingChoices[i]] = `O`;
+                gameBoard.checkVictory(gameBoard.array);
+                let score = null;
+                if(gameBoard.winnerStatus){
+                    gameBoard.winnerStatus = false;
+                    return gameBoard.array[i] = gameBoard.switchPlayer();
+                }
+                else{
+                    score = this.minimax(gameBoard.array, 0, false);
+                }
+                gameBoard.array[remainingChoices[i]] = ``;
+                console.log(`score of ${i} position: ${score}`);
                 if(score > bestScore){
                     bestScore = score;
-                    console.log(i);
+                    bestPosition = remainingChoices[i];
                 }
             };
-            gameBoard.array[newScore] = gameBoard.switchPlayer();
+            console.log(`end of analysis`)
+            gameBoard.array[bestPosition] = gameBoard.switchPlayer();
         },
-        scores: {X: -1, O: 1, tie: 0},
+        winnerValue: {X: -1, O: 1, tie: 0},
         minimax: function(array, depth, maximizingPlayer){
-            let result = gameBoard.checkVictory();
-            if(gameBoard.winnerStatus !== 0){
-                let score = this.scores[result];
-                gameBoard.winnerStatus = 0;
+            gameBoard.checkVictory(array);
+            let score = 0;
+            if(gameBoard.winnerStatus){
+                score = cpuLogic.winnerValue[gameBoard.winnerStatus];
+                gameBoard.winnerStatus = false;
                 return score;
             }
+            gameBoard.winnerStatus = false;
             if(maximizingPlayer){
-                let maxEval = -Infinity;
-                let maxChildArray = [];
+                let remainingChoices = [];
                 for (let i = 0; i < array.length; i++) {
-                    if (array[i] === "") {
-                        maxChildArray.push(i);
+                    if (array[i] === ``) {
+                        remainingChoices.push(i);
                     }
                 }
-                for(let i = 0; i < maxChildArray.length; i++){
-                    array[i] = `O`;
-                    console.log(array);
-                    let eval = this.minimax(maxChildArray[i], depth - 1, false);
-                    array[i] = ``;
-                    maxEval = Math.max(maxEval, eval);
+                let maxEval = -Infinity;
+                let eval = null;
+                for(let i = 0; i < remainingChoices.length; i++){
+                    array[remainingChoices[i]] = `O`;
+                    eval = cpuLogic.minimax(array, depth - 1, false);
+                    maxEval =  Math.max(maxEval, eval);
+                    array[remainingChoices[i]] = ``;
                 }
                 return maxEval;
             }
             else{
-                let minEval = Infinity;
-                let minChildArray = [];
+                let remainingChoices = [];
                 for (let i = 0; i < array.length; i++) {
-                    if (array[i] === "") {
-                        minChildArray.push(i);
+                    if (array[i] === ``) {
+                        remainingChoices.push(i);
                     }
                 }
-                for(let i = 0; i < minChildArray.length; i++){
-                    array[i] = `X`;
-                    console.log(array);
-                    let eval = this.minimax(minChildArray[i], depth - 1, true);
-                    array[i] = ``;
+                let minEval = Infinity;
+                let eval = null;
+                for(let i = 0; i < remainingChoices.length; i++){
+                    array[remainingChoices[i]] = `X`;
+                    eval = this.minimax(array, depth - 1, true);
                     minEval = Math.min(minEval, eval);
+                    array[remainingChoices[i]] = ``;
                 }
                 return minEval;
             }
