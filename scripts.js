@@ -38,6 +38,10 @@
             }
             else{
                 gameBoard.cpuTurn();
+                if(!this.winnerStatus){
+                    gameBoard.addListeners();
+                    gameBoard.removeListeners(); 
+                }
             }
         },
         wipeGrid: function(){
@@ -65,16 +69,12 @@
             if(gameBoard.cpuRandom === 1 && gameBoard.playerTurn === 1){
                 cpuLogic.cpuRandom();
                 gameBoard.wipeGrid();
-                gameBoard.renderGrid();
-                gameBoard.addListeners();
-                gameBoard.removeListeners();    
+                gameBoard.renderGrid();   
             }
             else if(gameBoard.cpuMinimax === 1 && gameBoard.playerTurn === 1){
                 cpuLogic.cpuMinimax();
                 gameBoard.wipeGrid();
                 gameBoard.renderGrid();
-                gameBoard.addListeners();
-                gameBoard.removeListeners();  
             }
             else{
                 gameBoard.addListeners();
@@ -116,8 +116,8 @@
                 ``, ``, ``,
                 ``, ``, ``,
             ];
-            document.querySelector(`.sum-container`).remove();
             gameBoard.winnerStatus = false;
+            document.querySelector(`.sum-container`).remove();
             gameBoard.renderGrid();
         },
         reset: function(){
@@ -354,7 +354,7 @@
         cpuMinimax: function(){
             const remainingChoices = [];
             for (let i = 0; i < gameBoard.array.length; i++) {
-                if (gameBoard.array[i] === "") {
+                if (gameBoard.array[i] === ``){
                     remainingChoices.push(i);
                 }
             }
@@ -377,8 +377,15 @@
                     bestScore = score;
                     bestPosition = remainingChoices[i];
                 }
+                if(score === bestScore){
+                    let randomizer = Math.random();
+                    if(randomizer >= .5){
+                        bestPosition = remainingChoices[i];
+                    }
+                }
             };
-            console.log(`end of analysis`)
+            console.log(gameBoard.winnerStatus);
+            console.log(`end of analysis`);
             gameBoard.array[bestPosition] = gameBoard.switchPlayer();
         },
         winnerValue: {X: -1, O: 1, tie: 0},
