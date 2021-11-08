@@ -167,76 +167,22 @@
                     title.textContent = `It's a tie!`;
                 };
         },
-        checkVictory: function (arr){
-            switch(true){
-                case (arr[0] === `X` && 
-                      arr[1] === `X` && 
-                      arr[2] === `X` ||
-                      arr[0] === `O` && 
-                      arr[1] === `O` && 
-                      arr[2] === `O` ):
-                    gameBoard.winnerStatus = arr[0];
-                break;
-                case (arr[3] === `X` && 
-                      arr[4] === `X` && 
-                      arr[5] === `X` ||
-                      arr[3] === `O` && 
-                      arr[4] === `O` && 
-                      arr[5] === `O` ):
-                    gameBoard.winnerStatus = arr[3];
-                break;
-                case (arr[6] === `X` && 
-                      arr[7] === `X` && 
-                      arr[8] === `X` ||
-                      arr[6] === `O` && 
-                      arr[7] === `O` && 
-                      arr[8] === `O` ):
-                    gameBoard.winnerStatus = arr[6];
-                break;
-                case (arr[0] === `X` && 
-                      arr[3] === `X` && 
-                      arr[6] === `X` ||
-                      arr[0] === `O` && 
-                      arr[3] === `O` && 
-                      arr[6] === `O` ):
-                    gameBoard.winnerStatus = arr[0];
-                break;
-                case (arr[1] === `X` && 
-                      arr[4] === `X` && 
-                      arr[7] === `X` ||
-                      arr[1] === `O` && 
-                      arr[4] === `O` && 
-                      arr[7] === `O` ):
-                    gameBoard.winnerStatus = arr[1];
-                break;
-                case (arr[2] === `X` && 
-                      arr[5] === `X` && 
-                      arr[8] === `X` ||
-                      arr[2] === `O` && 
-                      arr[5] === `O` && 
-                      arr[8] === `O` ):
-                    gameBoard.winnerStatus = arr[2];
-                break;
-                case (arr[0] === `X` && 
-                      arr[4] === `X` && 
-                      arr[8] === `X` ||
-                      arr[0] === `O` && 
-                      arr[4] === `O` && 
-                      arr[8] === `O` ):
-                    gameBoard.winnerStatus = arr[0];
-                break;
-                case (arr[2] === `X` && 
-                      arr[4] === `X` && 
-                      arr[6] === `X` ||
-                      arr[2] === `O` && 
-                      arr[4] === `O` && 
-                      arr[6] === `O` ):
-                    gameBoard.winnerStatus = arr[2];
-                break;
-                case (!arr.includes(``)):
-                    gameBoard.winnerStatus = `tie`;
-                break;
-            };
+        checkVictory: function(arr){
+            let winningCombos = [
+                [0, 1, 2],[3, 4, 5],[6, 7, 8],
+                [0, 3, 6],[1, 4, 7],[2, 5, 8],
+                [0, 4, 8],[2, 4, 6]];
+                winningCombos.forEach(combo => {
+                const [a, b, c] = combo;
+                if(arr[a] === arr[b] && 
+                   arr[a] === arr[c] &&
+                   arr[a] !== ``){
+                    gameBoard.winnerStatus = arr[a];
+                }
+            });
+            if(!arr.includes(``)){
+                gameBoard.winnerStatus = `tie`;
+            }
         },
     };
     let playerSelect = {
@@ -352,6 +298,7 @@
             gameBoard.array[remainingChoices[parseInt(Math.random() * remainingChoices.length)]] = gameBoard.switchPlayer();
         },
         cpuMinimax: function(){
+            console.log(`----start----`);
             const remainingChoices = [];
             for (let i = 0; i < gameBoard.array.length; i++) {
                 if (gameBoard.array[i] === ``){
@@ -363,9 +310,8 @@
             for(let i = 0; i < remainingChoices.length; i++){
                 gameBoard.array[remainingChoices[i]] = `O`;
                 gameBoard.checkVictory(gameBoard.array);
-                let score = null;
-                if(gameBoard.winnerStatus){
-                    gameBoard.winnerStatus = false;
+                let score = 0;
+                if(gameBoard.winnerStatus == `O`){
                     return gameBoard.array[i] = gameBoard.switchPlayer();
                 }
                 else{
@@ -379,13 +325,12 @@
                 }
                 if(score === bestScore){
                     let randomizer = Math.random();
-                    if(randomizer >= .5){
+                    if(randomizer <= .5){
                         bestPosition = remainingChoices[i];
                     }
                 }
             };
-            console.log(gameBoard.winnerStatus);
-            console.log(`end of analysis`);
+            console.log(`-----end-----`);
             gameBoard.array[bestPosition] = gameBoard.switchPlayer();
         },
         winnerValue: {X: -1, O: 1, tie: 0},
