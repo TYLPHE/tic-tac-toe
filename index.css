@@ -54,6 +54,10 @@ body{
     font-size: 40px;
     cursor: pointer;
 }
+.continue:hover{
+    border: 1px solid black;
+    animation: border-blink .7s infinite;
+}
 .select-container{
     background-color: #656781;
     height: 100%;
@@ -63,7 +67,6 @@ body{
     justify-content: center;
     align-items: center;
     font-size: 70px;
-    gap: 20px;
 }
 .color-container{
     height: 100%;
@@ -71,7 +74,6 @@ body{
     display:flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: center;
     align-items: center;
 }
 .select-title{
@@ -79,9 +81,13 @@ body{
     color:#ffffff;
 }
 .color-square{
-    width: 150px;
-    height: 150px;
+    width: 30%;
+    height: 45%;
     border: 1px solid black;
+}
+.color-square:hover{
+    border: 1px solid black;
+    animation: border-blink .7s infinite;
 }
 .confirm-container{
     display: flex;
@@ -91,6 +97,21 @@ body{
 .confirm{
     font-size: 30px;
     width: 200px;
-    height: 75px;
+    height: 200px;
     cursor: pointer;
+}
+.confirm:hover{
+    border: 1px solid black;
+    animation: border-blink .7s infinite;
+}
+@keyframes border-blink{
+    from{
+        border-color: black;
+    }
+    50%{
+        border-color: rgb(0, 200, 200);
+    }
+    100%{
+        border-color: black;
+    }
 }

@@ -158,9 +158,8 @@
         victoryScreen: function (){
             this.createSummary();
             let title = document.querySelector(`.title`);
-            let winner;
                 if(gameBoard.winnerStatus !== `tie`){
-                    winner = gameBoard.winnerStatus;
+                    let winner = gameBoard.winnerStatus;
                     title.textContent = `${winner} wins!`;
                 }
                 else{
@@ -177,12 +176,12 @@
                 if(arr[a] === arr[b] && 
                    arr[a] === arr[c] &&
                    arr[a] !== ``){
-                    gameBoard.winnerStatus = arr[a];
+                    return gameBoard.winnerStatus = arr[a];
+                }
+                if(!arr.includes(``) && !gameBoard.winnerStatus){
+                    gameBoard.winnerStatus = `tie`;
                 }
             });
-            if(!arr.includes(``)){
-                gameBoard.winnerStatus = `tie`;
-            }
         },
     };
     let playerSelect = {
@@ -248,6 +247,7 @@
         },
         setCPU: function(){
             this.selectContainer();
+            let selectContainer = document.querySelector(`.select-container`);
             let selectTitle = document.querySelector(`.select-title`);
             selectTitle.textContent = `Play vs bot?`;
             document.querySelector(`.color-container`).remove();
@@ -259,7 +259,7 @@
             random.addEventListener(`click`, () => {
                 gameBoard.cpuRandom = 1;
                 gameBoard.cpuMinimax = 0;
-                document.querySelector(`.select-container`).remove();
+                selectContainer.remove();
                 gameBoard.init();
             });
             let minimax = document.createElement(`button`);
@@ -268,22 +268,19 @@
             minimax.addEventListener(`click`, () => {
                 gameBoard.cpuRandom = 0;
                 gameBoard.cpuMinimax = 1
-                document.querySelector(`.select-container`).remove();
+                selectContainer.remove();
                 gameBoard.init();
             });
             let no = document.createElement(`button`);
             no.className = `confirm`;
-            no.textContent = `No`;
+            no.textContent = `No bot`;
             no.addEventListener(`click`, () => {
                 gameBoard.cpuRandom = 0;
                 gameBoard.cpuMinimax = 0;
-                document.querySelector(`.select-container`).remove();
+                selectContainer.remove();
                 gameBoard.init();
             });
-            confirmContainer.appendChild(random);
-            confirmContainer.appendChild(minimax);
-            confirmContainer.appendChild(no);
-            let selectContainer = document.querySelector(`.select-container`);
+            confirmContainer.append(random, minimax, no);
             selectContainer.appendChild(confirmContainer);
         },
     }
@@ -298,83 +295,83 @@
             gameBoard.array[remainingChoices[parseInt(Math.random() * remainingChoices.length)]] = gameBoard.switchPlayer();
         },
         cpuMinimax: function(){
-            console.log(`----start----`);
             const remainingChoices = [];
-            for (let i = 0; i < gameBoard.array.length; i++) {
-                if (gameBoard.array[i] === ``){
-                    remainingChoices.push(i);
+            gameBoard.array.forEach((element, index) => {
+                if (element === ``){
+                    remainingChoices.push(index);
                 }
-            }
+            });
+            let maxEval = -Infinity;
             let bestPosition;
-            let bestScore = -Infinity;
-            for(let i = 0; i < remainingChoices.length; i++){
+            console.log(`----start----`);
+            for(i = 0; i < remainingChoices.length; i++){
                 gameBoard.array[remainingChoices[i]] = `O`;
                 gameBoard.checkVictory(gameBoard.array);
-                let score = 0;
+                let eval = 0
                 if(gameBoard.winnerStatus == `O`){
-                    return gameBoard.array[i] = gameBoard.switchPlayer();
+                    return gameBoard.array[remainingChoices[i]] = gameBoard.switchPlayer();
                 }
                 else{
-                    score = this.minimax(gameBoard.array, 0, false);
+                    eval = this.minimax(gameBoard.array, 0, false);
                 }
                 gameBoard.array[remainingChoices[i]] = ``;
-                console.log(`score of ${i} position: ${score}`);
-                if(score > bestScore){
-                    bestScore = score;
+                console.log(`eval of board position ${remainingChoices[i]}: ${eval}`);
+                if(eval > maxEval){
+                    maxEval = eval;
                     bestPosition = remainingChoices[i];
                 }
-                if(score === bestScore){
+                if(eval === maxEval){
                     let randomizer = Math.random();
                     if(randomizer <= .5){
                         bestPosition = remainingChoices[i];
                     }
-                }
-            };
+                }  
+            }
             console.log(`-----end-----`);
             gameBoard.array[bestPosition] = gameBoard.switchPlayer();
         },
         winnerValue: {X: -1, O: 1, tie: 0},
         minimax: function(array, depth, maximizingPlayer){
             gameBoard.checkVictory(array);
-            let score = 0;
+            let eval = null;
             if(gameBoard.winnerStatus){
-                score = cpuLogic.winnerValue[gameBoard.winnerStatus];
+                eval = cpuLogic.winnerValue[gameBoard.winnerStatus];
                 gameBoard.winnerStatus = false;
-                return score;
+                return eval;
             }
             gameBoard.winnerStatus = false;
             if(maximizingPlayer){
                 let remainingChoices = [];
-                for (let i = 0; i < array.length; i++) {
-                    if (array[i] === ``) {
-                        remainingChoices.push(i);
+                array.forEach((element, index) => {
+                    if (element === ``){
+                        remainingChoices.push(index);
                     }
-                }
+                });
                 let maxEval = -Infinity;
                 let eval = null;
-                for(let i = 0; i < remainingChoices.length; i++){
-                    array[remainingChoices[i]] = `O`;
+                remainingChoices.forEach(element => {
+                    array[element] = `O`;
                     eval = cpuLogic.minimax(array, depth - 1, false);
                     maxEval =  Math.max(maxEval, eval);
-                    array[remainingChoices[i]] = ``;
-                }
+                    array[element] = ``
+                });
                 return maxEval;
             }
             else{
                 let remainingChoices = [];
-                for (let i = 0; i < array.length; i++) {
-                    if (array[i] === ``) {
-                        remainingChoices.push(i);
+                array.forEach((element, index) => {
+                    if (element === ``){
+                        remainingChoices.push(index);
                     }
-                }
+                });
                 let minEval = Infinity;
                 let eval = null;
-                for(let i = 0; i < remainingChoices.length; i++){
-                    array[remainingChoices[i]] = `X`;
+                remainingChoices.forEach(element => {
+                    array[element] = `X`;
                     eval = this.minimax(array, depth - 1, true);
                     minEval = Math.min(minEval, eval);
-                    array[remainingChoices[i]] = ``;
-                }
+                    array[element] = ``;
+                });
                 return minEval;
             }
         },
