@@ -1,4 +1,4 @@
-// (function (){
+(function (){
     let gameBoard = {
         array: [
             ``, ``, ``,
@@ -67,21 +67,20 @@
         },
         cpuTurn: function(){
             if(gameBoard.cpuRandom === 1 && gameBoard.playerTurn === 1){
-                cpuLogic.cpuRandom();
-                gameBoard.wipeGrid();
-                gameBoard.renderGrid();   
+                    cpuLogic.cpuRandom();
+                    gameBoard.wipeGrid();
+                    gameBoard.renderGrid();   
             }
             else if(gameBoard.cpuMinimax === 1 && gameBoard.playerTurn === 1){
-                cpuLogic.cpuMinimax();
-                gameBoard.wipeGrid();
-                gameBoard.renderGrid();
+                    cpuLogic.cpuMinimax();
+                    gameBoard.wipeGrid();
+                    gameBoard.renderGrid();
             }
             else{
                 gameBoard.addListeners();
                 gameBoard.removeListeners();
             }
         },
-
         markBoard: function(){
             gameBoard.array[this.id] = gameBoard.switchPlayer();
             gameBoard.removeListeners();
@@ -139,6 +138,24 @@
             gameBoard.wipeGrid();
             let summaryContainer = document.createElement(`div`);
                 summaryContainer.className = `sum-container`;
+            let miniGridContainer = document.createElement(`div`);
+                miniGridContainer.className = `mini-grid-container`;
+            let miniGrid = document.createElement(`div`);
+                miniGrid.className = `mini-grid`;
+            for(i = 0; i < this.array.length; i++){
+                let miniBoxes = document.createElement(`div`);
+                miniGrid.appendChild(miniBoxes);
+                miniBoxes.className = `mini-box ${i}`;
+                miniBoxes.id = i;
+                miniBoxes.textContent = this.array[i];
+                if(this.array[i] === `X`){
+                    miniBoxes.style.color = player1.getColor;
+                }
+                if(this.array[i] === `O`){
+                    miniBoxes.style.color = player2.getColor;
+                }
+            };
+                miniGridContainer.appendChild(miniGrid);
             let continueButton = document.createElement(`button`);
                 continueButton.className = `continue`;
                 continueButton.textContent = `Continue`;
@@ -150,10 +167,8 @@
             let title = document.createElement(`div`);
                 title.className = `title`;
                 title.textContent = ``;
-            summaryContainer.appendChild(title);
+            summaryContainer.append(title, miniGridContainer, continueButton, resetButton);
             this.$board.appendChild(summaryContainer);
-            summaryContainer.appendChild(continueButton);
-            summaryContainer.appendChild(resetButton);
         },
         victoryScreen: function (){
             this.createSummary();
@@ -395,4 +410,4 @@
     const player1 = player(`player 1`, `X`, ``);
     const player2 = player(`Player 2`, `O`, ``);
     playerSelect.selectContainer();
-// })();
+})();
