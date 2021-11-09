@@ -73,21 +73,26 @@ body{
     width: 80%;
     display:flex;
     flex-wrap: wrap;
-    gap: 20px;
+    /* gap: 20px; */
     align-items: center;
+    justify-content: center;
+    border: 1px solid black;
 }
 .select-title{
     margin: 20px;
     color:#ffffff;
 }
 .color-square{
-    width: 30%;
-    height: 45%;
-    border: 1px solid black;
+    width: 33.3%;
+    height: 50%;
 }
-.color-square:hover{
-    border: 1px solid black;
-    animation: border-blink .7s infinite;
+.donut-hole{
+    position: absolute;
+    z-index: 1;
+    height: 80%;
+    width: 50%;
+    background-color: #656781;
+    clip-path: circle(120px at 50% 50%);
 }
 .confirm-container{
     display: flex;
