@@ -16,7 +16,7 @@ Tic-tac-toe is a 1-2 player game. It's a relatively simple app but contains one 
 
 ## Challenges
 ### Minimax
-```
+```javascript
 minimax: function(array, depth, maximizingPlayer){
     gameBoard.checkVictory(array);
     let eval = null;
@@ -82,7 +82,7 @@ In the example above, the computer would lose if it chooses any square except po
 ## Computer is boring
 With the way minimax is programmed, it will select the first save/winning move. I added some extra lines to the app to make each game a little more unique:
 
-```
+```javascript
 if(eval === maxEval){
     let randomizer = Math.random();
     if(randomizer <= .5){
